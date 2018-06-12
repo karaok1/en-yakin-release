@@ -4,9 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
-
-
     tools:context="com.google.firebase.quickstart.fcm.MainActivity"
     tools:showIn="@layout/activity_main">
 
@@ -21,14 +18,10 @@
             android:layout_height="match_parent"
             android:clipToPadding="false"
             android:fillViewport="true">
-
             <WebView
                 android:id="@+id/enyakin"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-
-                />
-
+                android:layout_height="match_parent" />
         </android.support.v4.widget.NestedScrollView>
     </android.support.v4.widget.SwipeRefreshLayout>
 </RelativeLayout>
