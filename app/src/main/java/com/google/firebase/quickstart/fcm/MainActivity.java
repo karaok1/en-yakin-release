@@ -19,9 +19,14 @@ package com.google.firebase.quickstart.fcm;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -37,19 +42,50 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import java.net.URL;
+
 public class MainActivity extends AppCompatActivity {
     private WebView mWebView;
     private static final String TAG = "MainActivity";
+
+    // Refresh page with pull
+    SwipeRefreshLayout mySwipeRefreshLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mySwipeRefreshLayout = (SwipeRefreshLayout)this.findViewById(R.id.swipeContainer);
+
+        String URL = "https://i.enyakin.com/";
         mWebView = (WebView) findViewById(R.id.enyakin);
         WebSettings webSettings = mWebView.getSettings();
+        mWebView.loadUrl(URL);
         webSettings.setJavaScriptEnabled(true);
-        mWebView.setWebViewClient(new WebViewClient());
-        mWebView.loadUrl("https://i.enyakin.com/auth/login");
+        mWebView.setWebViewClient(new WebViewClient() {
+            @Override
+            public boolean shouldOverrideUrlLoading(WebView view, String url) {
+
+                if (url.startsWith("tel:"))
+                {
+                    Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse(url));
+                    startActivity(intent);
+                    return true;
+                }
+                view.loadUrl(url);
+                return true;
+            }
+        });
+
+        mySwipeRefreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        mWebView.reload();
+                    }
+                }
+        );
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             // Create channel to show notifications.
@@ -114,5 +150,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });*/
     }
-
+/*
+    public boolean shouldOverrideUrlLoading(WebView view, String url)
+    {
+        if (url.startsWith("tel://"))
+        {
+            Intent intent = new Intent(Intent.ACTION_DIAL, Uri.parse(url));
+            startActivity(intent);
+            return true;
+        }
+        return false;
+    }
+    */
 }
